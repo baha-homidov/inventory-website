@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("../partials/head") -%>
+  </head>
+  <body>
+    <div class="content">
+      <aside class="sidebar"><%- include("../partials/sidebar") -%></aside>
+      <main>
+        <%- include("../partials/title") -%>
+
+        <p class="sub-info">
+          The inventory currently has the following categories
+        </p>
+        <ul class="element-list">
+          <% category_list.forEach(category => { %>
+          <ul>
+            <a href="<%= category.url %> "><%= category.name %></a>
+          </ul>
+          <% }) %>
+        </ul>
+      </main>
+    </div>
+  </body>
+</html>

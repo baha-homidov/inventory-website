@@ -1,4 +1,5 @@
 const Category = require("../models/category");
+const Item = require("../models/item")
 const async = require("async");
 
 // Display list of all Categories
@@ -20,8 +21,39 @@ exports.category_list = (req, res, next) => {
 };
 
 // Display detail page for a speifict Category
-exports.category_detail = (req, res) => {
-  res.send(`NOT IMPLEMENTED: Category detail: ${req.params.id}`);
+exports.category_detail = (req, res, next) => {
+  async.parallel(
+    {
+      category(callback) { // get given category's info from database
+        Category.findById(req.params.id).exec(callback);
+      },
+
+      category_items(callback) { // get items that contain the given category in their category array
+        Item.find({ category: req.params.id }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.category == null) {
+        // No results.
+        const err = new Error("Genre not found");
+        err.status = 404;
+        return next(err);
+      }
+      console.log(results.category_items)
+      // Successful, so render
+      res.render("pages/category_detail", {
+        page_title: "Category Detail",
+        title: results.category.name,
+        category: results.category,
+        item_list: results.category_items,
+      });
+    }
+  );
+
+  // res.send(`NOT IMPLEMENTED: Category detail: ${req.params.id}`);
 };
 
 // Display Category create from GET

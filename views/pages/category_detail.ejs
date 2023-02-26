@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("../partials/head") -%>
+  </head>
+  <body>
+    <div class="content">
+      <aside class="sidebar"><%- include("../partials/sidebar") -%></aside>
+      <main>
+        <%- include("../partials/title") -%>
+        <p class="sub-info">
+          <%= category.description %>
+        </p>
+        <ul class="element-list">
+          <% item_list.forEach(item => { %>
+          <ul>
+            <a href="<%= item.url %> "><%= item.name %></a>
+            <%= item.category.name %>
+          </ul>
+          <% }) %>
+        </ul>
+      </main>
+    </div>
+  </body>
+</html>

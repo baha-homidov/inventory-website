@@ -6,7 +6,7 @@ var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
-const catalogRouter = require("./routes/catalog"); // Import routes for "catalog" are of site
+const catalogRouter = require("./routes/catalog"); // Import routes for "catalog" 
 
 var app = express();
 

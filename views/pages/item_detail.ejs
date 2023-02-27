@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("../partials/head") -%>
+  </head>
+  <body>
+    <div class="content">
+      <aside class="sidebar"><%- include("../partials/sidebar") -%></aside>
+      <main>
+        <%- include("../partials/title") -%>
+        <p class="sub-info"><%= item.description %></p>
+        <div class="full-info-container">
+          <div class="entry">Category: <%= item.category.name %></div>
+          <div class="entry">Number in stock: <%= item.number_in_stock %></div>
+          <div class="entry">Price: <%= item.price %></div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

@@ -9,7 +9,6 @@ ul {
 }
 
 body > .content {
-
   display: flex;
 
   min-height: 100vh;
@@ -78,7 +77,7 @@ body > .content {
 }
 
 .content main .info {
-  list-style:inside square;
+  list-style: inside square;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -86,18 +85,12 @@ body > .content {
   font-size: 1.5em;
 }
 
-
-main .element-list 
-{
-  
-
+main .element-list {
   display: flex;
   flex-direction: column;
   margin-top: 20px;
   gap: 10px;
 }
-
-
 
 main .element-list a {
   text-decoration: none;
@@ -105,16 +98,23 @@ main .element-list a {
   color: #17222d;
   font-weight: 600;
   transition: 0.2s ease;
-
 }
 main .element-list a:hover {
   color: #42505e;
-  
 }
 
+main .full-info-container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+main .full-info-container .entry {
+  font-size: 1.3rem;
+}
 
 @media (max-width: 520px) {
-
   body > .content {
     flex-direction: column;
   }
@@ -128,7 +128,4 @@ main .element-list a:hover {
   .content aside.sidebar .menu-items {
     flex-direction: row;
   }
-
-  
-
 }

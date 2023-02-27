@@ -49,7 +49,33 @@ exports.item_list = (req, res) => {
 
 // Display detail page for a speifict Item
 exports.item_detail = (req, res) => {
-  res.send(`NOT IMPLEMENTED: Item detail: ${req.params.id}`);
+  async.parallel(
+    {
+      item(callback) {
+        // get item info from database
+        Item.findById(req.params.id)
+          .populate("category")
+          .exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.item == null) {
+        // No results.
+        const err = new Error("Genre not found");
+        err.status = 404;
+        return next(err);
+      }
+
+      res.render("pages/item_detail", {
+        page_title: "Item detail",
+        title: results.item.name,
+        item: results.item,
+      });
+    }
+  );
 };
 
 // Display Item create from GET

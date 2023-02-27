@@ -1,6 +1,11 @@
 const Category = require("../models/category");
 const Item = require("../models/item")
+
+// async library to work with asynchronous operations
 const async = require("async");
+
+// express-validator module to sanitize forms
+const {body, validationResult} = require("express-validator")
 
 // Display list of all Categories
 exports.category_list = (req, res, next) => {
@@ -53,11 +58,11 @@ exports.category_detail = (req, res, next) => {
     }
   );
 
-  // res.send(`NOT IMPLEMENTED: Category detail: ${req.params.id}`);
+
 };
 
 // Display Category create from GET
-exports.category_create_get = (req, res) => {
+exports.category_create_get = (req, res, next) => {
   res.send("NOT IMPLEMENTED: Category create GET");
 };
 

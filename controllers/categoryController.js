@@ -45,7 +45,7 @@ exports.category_detail = (req, res, next) => {
       }
       if (results.category == null) {
         // No results.
-        const err = new Error("Genre not found");
+        const err = new Error("Category not found");
         err.status = 404;
         return next(err);
       }
@@ -64,8 +64,8 @@ exports.category_detail = (req, res, next) => {
 // Display Category create from GET
 exports.category_create_get = (req, res, next) => {
   res.render("pages/category_form", {
-    title: "Category form",
-    page_title: "Category form",
+    title: "Create category",
+    page_title: "Create category",
   });
 };
 
@@ -79,12 +79,12 @@ exports.category_create_post = [
     // Extract the validation errors from a request.
     const errors = validationResult(req);
 
-    // Create a genre object with escaped and trimmed data.
-    const category = new Category({ name: req.body.name });
+    // Create a category object with escaped and trimmed data.
+    const category = new Category({ name: req.body.name, description: req.body.description });
 
     if (!errors.isEmpty()) {
       // There are errors. Render the form again with sanitized values/error messages.
-      res.render("genre_form", {
+      res.render("pages/category_form", {
         title: "Create Category",
         page_title: "Create Category",
         category: category,
@@ -107,7 +107,7 @@ exports.category_create_post = [
             if (err) {
               return next(err);
             }
-            // Genre saved. Redirect to genre detail page.
+            // Category saved. Redirect to category detail page.
             res.redirect(category.url);
           });
         }

@@ -2,6 +2,9 @@ const Item = require("../models/item");
 const Category = require("../models/category");
 const async = require("async");
 
+// express-validator module to sanitize forms
+const { body, validationResult } = require("express-validator");
+
 exports.index = (req, res) => {
   async.parallel(
     {
@@ -53,9 +56,7 @@ exports.item_detail = (req, res) => {
     {
       item(callback) {
         // get item info from database
-        Item.findById(req.params.id)
-          .populate("category")
-          .exec(callback);
+        Item.findById(req.params.id).populate("category").exec(callback);
       },
     },
     (err, results) => {
@@ -79,14 +80,94 @@ exports.item_detail = (req, res) => {
 };
 
 // Display Item create from GET
-exports.item_create_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: Item create GET");
+exports.item_create_get = (req, res, next) => {
+  // Get all categories, which can be used for adding to the item
+  async.parallel(
+    {
+      categories(callback) {
+        Category.find(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      res.render("pages/item_form", {
+        title: "Create item",
+        page_title: "Create item",
+        categories: results.categories,
+      });
+    }
+  );
 };
 
 // Handle Item create on POST.
-exports.item_create_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: Item create POST");
-};
+exports.item_create_post = [
+  // Validate and sanitize the name field
+  body("name", "Category name required").trim().isLength({ min: 1 }).escape(),
+  body("price", "Price should be more than 0")
+    .trim()
+    .isFloat({ min: 0 })
+    .escape(),
+  body("number_in_stock", "Number in srock should be more than -1")
+    .trim()
+    .isInt({ min: 0 })
+    .escape(),
+
+  // Process request after validation and sanitization
+  (req, res, next) => {
+    // Extract the valdation errors from a request
+    const errors = validationResult(req);
+
+    // Get category ID for further saving
+    async.parallel(
+      {
+        category(callback) {
+          // get item info from database
+          Category.findOne({ name: req.body.category }).exec(callback);
+        },
+      },
+      (err, results) => {
+        if (err) {
+          next(err);
+        }
+
+        // Create an item object wth escaped and trimmed data.
+        const item = new Item({
+          name: req.body.name,
+          description: req.body.description,
+          price: req.body.price,
+          number_in_stock: req.body.number_in_stock,
+          category: results.category._id,
+        });
+
+        if (!errors.isEmpty()) {
+          // There are errors. Render the form again with sanitized values/error messages.
+          res.render("pages/item_form", {
+            title: "Create Item",
+            page_title: "Create Item",
+            item: item,
+            errors: errors.array(),
+          });
+          return;
+        } else {
+          // Date from form is valid
+          item.save((err) => {
+            if (err) {
+              return next(err);
+            }
+            // Item saved. Redirect to item detail page
+            res.redirect(item.url);
+          });
+        }
+
+        // res.send(results.category._id);
+      }
+    );
+
+    // res.send(req.body);
+  },
+];
 
 // Display Item delete form on GET
 exports.item_delete_get = (req, res) => {

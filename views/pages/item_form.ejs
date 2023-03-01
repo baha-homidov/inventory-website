@@ -8,17 +8,18 @@
       <aside class="sidebar"><%- include("../partials/sidebar") -%></aside>
       <main>
         <%- include("../partials/title") -%>
+
         <form class="create-form" action="" method="post">
-          <label for="name">Category name</label>
+          <label for="name">Item name</label>
           <input
             type="text"
             name="name"
             id="name"
-            placeholder="Laptops, Monitors etc"
+            placeholder="Name"
             required
           />
 
-          <label for="description">Category description</label>
+          <label for="description">Item description</label>
           <textarea
             type="text"
             name="description"
@@ -26,8 +27,28 @@
             placeholder="Some extra info"
             class="tall"
             rows="5"
-            
           ></textarea>
+
+          <label for="category">Category</label>
+          <select id="category" name="category">
+            <% for(var i=0; i < categories.length; i++) { %>
+            <option value="<%= categories[i].name %>">
+              <%= categories[i].name %>
+            </option>
+            <% } %>
+          </select>
+
+          <label for="price">Price</label>
+          <input type="number" name="price" id="price" min="1" />
+
+          <label for="number-in-stock">Number in stock</label>
+          <input
+            type="number"
+            name="number_in_stock"
+            id="number-in-stock"
+            min="0"
+          />
+
           <button class="submit" type="submit">Submit</button>
         </form>
       </main>

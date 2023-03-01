@@ -145,7 +145,8 @@ main .create-form .submit:hover {
   cursor: pointer;
 }
 main .create-form input,
-main .create-form textarea {
+main .create-form textarea,
+main form #category {
   border: 1px solid #34495e;
   padding: 2px;
   width: min(300px, 100%);
@@ -153,9 +154,13 @@ main .create-form textarea {
   resize: none;
 }
 
-main .create-form input {
+
+
+main .create-form input,
+main select#category {
   height: 25px;
 }
+
 
 @media (max-width: 520px) {
   body > .content {

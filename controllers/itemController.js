@@ -81,7 +81,7 @@ exports.item_detail = (req, res) => {
 
 // Display Item create from GET
 exports.item_create_get = (req, res, next) => {
-  // Get all categories, which can be used for adding to the item
+  // Get all categories, which will be used for adding to the item
   async.parallel(
     {
       categories(callback) {
@@ -209,8 +209,37 @@ exports.item_delete_post = (req, res, next) => {
 };
 
 // Display Item update form on GET.
-exports.item_update_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: Item update GET");
+exports.item_update_get = (req, res, next) => {
+  // Get all categories, which will be used for adding to the item
+
+  async.parallel(
+    {
+      categories(callback) {
+        Category.find(callback)
+      },
+      item(callback) {
+        Item.findById(req.params.id).populate("category", "name").exec(callback);
+      }
+    }, (err, results) => {
+      if(err) {
+        return next(err);
+      }
+      if (results.item == null) {
+        // No results.
+        const err = new Error("Item not found");
+        err.status = 404;
+        return next(err);
+      }
+
+      // Success.
+      res.render("pages/item_form", {
+        title: "Update Item",
+        page_title: "Update Item",
+        categories: results.categories,
+        item: results.item,
+      });
+    }
+  )
 };
 
 // Handle Item update on POST

@@ -16,6 +16,7 @@
             name="name"
             id="name"
             placeholder="Name"
+            value="<%-  !locals.item ? "" : item.name %>"
             required
           />
 
@@ -27,7 +28,7 @@
             placeholder="Some extra info"
             class="tall"
             rows="5"
-          ></textarea>
+          ><%-  !locals.item ? "" : item.description%></textarea>
 
           <label for="category">Category</label>
           <select id="category" name="category">

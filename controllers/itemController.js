@@ -170,14 +170,42 @@ exports.item_create_post = [
 ];
 
 // Display Item delete form on GET
-exports.item_delete_get = (req, res) => {
-  res.send("Item delete GET: not implemented");
+exports.item_delete_get = (req, res, next) => {
+  async.parallel(
+    {
+      item(callback) {
+        Item.findById(req.params.id).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.item == null) {
+        // No results.
+        res.redirect("/catalog/item");
+      }
 
+      // Successful, so render.
+      res.render("pages/item_delete", {
+        title: "Delete Item",
+        page_title: "Delete Item",
+        category: results.item,
+      });
+    }
+  );
 };
 
 // Handle Item delete on POST
-exports.item_delete_post = (req, res) => {
-  res.send("NOT IMPLEMNTED: Item delete POST");
+exports.item_delete_post = (req, res, next) => {
+  //  Delete object and redirect to the list of categories.
+  Item.findByIdAndRemove(req.body.itemid, (err) => {
+    if (err) {
+      return next(err);
+    }
+    // Success - go to author list
+    res.redirect("/catalog/item");
+  });
 };
 
 // Display Item update form on GET.

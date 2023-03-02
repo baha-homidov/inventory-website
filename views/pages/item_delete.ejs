@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("../partials/head") -%>
+  </head>
+  <body>
+    <div class="content">
+      <aside class="sidebar"><%- include("../partials/sidebar") -%></aside>
+      <main>
+        <h3>Do you really want to delete this item?</h3>
+          <form action="" method="post">
+            <input id="itemid" type="hidden" name="itemid" required value=<%- category._id %>>
+            <button type="submit">Delete</button>
+          </form>
+      </main>
+    </div>
+  </body>
+</html>

@@ -154,13 +154,24 @@ main form #category {
   resize: none;
 }
 
-
-
 main .create-form input,
 main select#category {
   height: 25px;
 }
 
+main ul.item-list {
+
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+main ul.item-list a {
+
+  color: black;
+}
 
 @media (max-width: 520px) {
   body > .content {

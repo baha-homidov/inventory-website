@@ -6,6 +6,7 @@ const async = require("async");
 
 // express-validator module to sanitize forms
 const { body, validationResult } = require("express-validator");
+const category = require("../models/category");
 
 // Display list of all Categories
 exports.category_list = (req, res, next) => {
@@ -80,7 +81,10 @@ exports.category_create_post = [
     const errors = validationResult(req);
 
     // Create a category object with escaped and trimmed data.
-    const category = new Category({ name: req.body.name, description: req.body.description });
+    const category = new Category({
+      name: req.body.name,
+      description: req.body.description,
+    });
 
     if (!errors.isEmpty()) {
       // There are errors. Render the form again with sanitized values/error messages.
@@ -117,13 +121,73 @@ exports.category_create_post = [
 ];
 
 // Display Category delete form on GET
-exports.category_delete_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: Category delete get");
+exports.category_delete_get = (req, res, next) => {
+  async.parallel(
+    {
+      category(callback) {
+        Category.findById(req.params.id).exec(callback);
+      },
+      categorys_items(callback) {
+        Item.find({ category: req.params.id }).exec(callback);
+      },
+    },
+
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.category == null) {
+        // No results.
+        res.redirect("/catalog/category");
+      }
+
+      // Successful, so render.
+      res.render("pages/category_delete", {
+        title: "Delete Category",
+        page_title: "Delete Category",
+        category: results.category,
+        categorys_items: results.categorys_items,
+      });
+    }
+  );
 };
 
 // Handle Category delete on POST
-exports.category_delete_post = (req, res) => {
-  res.send("NOT IMPLEMNTED: Category delete POST");
+exports.category_delete_post = (req, res, next) => {
+  async.parallel(
+    {
+      category(callback) {
+        Category.findById(req.params.id).exec(callback);
+      },
+      categorys_items(callback) {
+        Item.find({ category: req.params.id }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      // Success
+      if (results.categorys_items.length > 0) {
+        // Category has items. Render in same way as for GET route.
+        res.render("pages/category_delete", {
+          title: "Delete Category",
+          page_title: "Delete Category",
+          category: results.category,
+          categorys_items: results.categorys_items,
+        });
+        return;
+      }
+      // Category has no items. Delete object and redirect to the list of categories.
+      Category.findByIdAndRemove(req.body.categoryid, (err) => {
+        if (err) {
+          return next(err);
+        }
+        // Success - go to author list
+        res.redirect("/catalog/category");
+      });
+    }
+  );
 };
 
 // Display Category update form on GET.

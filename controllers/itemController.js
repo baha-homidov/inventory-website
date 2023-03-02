@@ -143,7 +143,7 @@ exports.item_create_post = [
 
         if (!errors.isEmpty()) {
           // There are errors. Render the form again with sanitized values/error messages.
-          res.render("pages/item_form", {
+          res.render("pages/index", {
             title: "Create Item",
             page_title: "Create Item",
             item: item,
@@ -171,7 +171,8 @@ exports.item_create_post = [
 
 // Display Item delete form on GET
 exports.item_delete_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: Item delete get");
+  res.send("Item delete GET: not implemented");
+
 };
 
 // Handle Item delete on POST

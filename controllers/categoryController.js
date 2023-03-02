@@ -191,11 +191,72 @@ exports.category_delete_post = (req, res, next) => {
 };
 
 // Display Category update form on GET.
-exports.category_update_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: Category update GET");
+exports.category_update_get = (req, res, next) => {
+  // Get category for form
+  async.parallel(
+    {
+      category(callback) {
+        Category.findById(req.params.id).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.category == null) {
+        // No results.
+        const err = new Error("Category not found");
+        err.status = 404;
+        return next(err);
+      }
+
+      // Success.
+      res.render("pages/category_form", {
+        title: "Update Category",
+        page_title: "Update Category",
+        category: results.category,
+      });
+    }
+  );
 };
 
 // Handle Category update on POST
-exports.category_update_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: Category update POST");
-};
+exports.category_update_post = [
+  // Validate and sanitize the name field.
+  body("name", "Category name required").trim().isLength({ min: 1 }).escape(),
+
+  // Process request after validation and sanitization.
+  (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a category object with escaped and trimmed data.
+    const category = new Category({
+      name: req.body.name,
+      description: req.body.description,
+      _id: req.params.id, //This is required, or a new ID will be assigned!
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render the form again with sanitized values/error messages.
+      res.render("pages/category_form", {
+        title: "Create Category",
+        page_title: "Create Category",
+        category: category,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Data from form is valid. Update the recors
+      Category.findByIdAndUpdate(req.params.id, category, {}, (err, thecategory) => {
+        if (err) {
+          return next(err);
+        }
+  
+        // Successful: redirect to book detail page.
+        res.redirect(thecategory.url);
+      });
+
+    }
+  },
+];

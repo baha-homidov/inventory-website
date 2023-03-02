@@ -16,6 +16,8 @@
             id="name"
             placeholder="Laptops, Monitors etc"
             required
+            value="<%-  !locals.category ? "" : category.name %>"
+            
           />
 
           <label for="description">Category description</label>
@@ -26,8 +28,7 @@
             placeholder="Some extra info"
             class="tall"
             rows="5"
-            
-          ></textarea>
+          ><%-  !locals.category ? "" : category.description%></textarea>
           <button class="submit" type="submit">Submit</button>
         </form>
       </main>

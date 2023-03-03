@@ -243,6 +243,71 @@ exports.item_update_get = (req, res, next) => {
 };
 
 // Handle Item update on POST
-exports.item_update_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: Item update POST");
-};
+exports.item_update_post = [
+  // Validate and sanitize the name field
+  body("name", "Category name required").trim().isLength({ min: 1 }).escape(),
+  body("price", "Price should be more than 0")
+    .trim()
+    .isFloat({ min: 0 })
+    .escape(),
+  body("number_in_stock", "Number in srock should be more than -1")
+    .trim()
+    .isInt({ min: 0 })
+    .escape(),
+  
+// Process request after validation and sanitization
+(req, res, next) => {
+  // Extract the valdation errors from a request
+  const errors = validationResult(req);
+
+  // Get category ID for further saving
+  async.parallel(
+    {
+      category(callback) {
+        // get item info from database
+        Category.findOne({ name: req.body.category }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        next(err);
+      }
+
+      // Create an item object wth escaped and trimmed data.
+      const item = new Item({
+        name: req.body.name,
+        description: req.body.description,
+        price: req.body.price,
+        number_in_stock: req.body.number_in_stock,
+        category: results.category._id,
+        _id: req.params.id, // This is required, or a new ID will be assigned!
+      });
+
+      if (!errors.isEmpty()) {
+        // There are errors. Render the form again with sanitized values/error messages.
+        res.render("pages/index", {
+          title: "Create Item",
+          page_title: "Create Item",
+          item: item,
+          errors: errors.array(),
+        });
+        return;
+      } else {
+        // Date from form is valid
+        Item.findByIdAndUpdate(req.params.id, item, {},  (err, theitem) => {
+          if (err) {
+            return next(err);
+          }
+          // Item saved. Redirect to item detail page
+          res.redirect(theitem.url);
+        });
+      }
+
+
+    }
+  );
+
+  // res.send(req.body);
+},
+
+]

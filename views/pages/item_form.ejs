@@ -11,14 +11,8 @@
 
         <form class="create-form" action="" method="post">
           <label for="name">Item name</label>
-          <input
-            type="text"
-            name="name"
-            id="name"
-            placeholder="Name"
-            value="<%-  !locals.item ? "" : item.name %>"
-            required
-          />
+          <input type="text" name="name" id="name" placeholder="Name" value="<%-
+          !locals.item ? "" : item.name %>" required />
 
           <label for="description">Item description</label>
           <textarea
@@ -28,23 +22,31 @@
             placeholder="Some extra info"
             class="tall"
             rows="5"
-          ><%-  !locals.item ? "" : item.description%></textarea>
+          >
+<%-  !locals.item ? "" : item.description%></textarea
+          >
 
           <label for="category">Category</label>
           <select id="category" name="category">
             <% for(var i=0; i < categories.length; i++) { %>
-            <option value="<%= categories[i].name %>">
-              <%= categories[i].name %>
+            <option <% if(locals.item){ %>
+              <% if(item.category.name == categories[i].name){ %> selected <% }
+              %> <% } %> value="<%= categories[i].name %>"> <%=
+              categories[i].name %>
             </option>
             <% } %>
           </select>
 
           <label for="price">Price</label>
-          <input type="number" name="price" id="price" min="1" />
+          <input value="<%- !locals.item ? "" : item.price %>" type="number"
+          name="price" id="price" min="1" />
 
           <label for="number-in-stock">Number in stock</label>
           <input
             type="number"
+            value="<%-  !locals.item ? "" : item.number_in_stock %>"
+
+
             name="number_in_stock"
             id="number-in-stock"
             min="0"
